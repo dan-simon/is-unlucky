@@ -1,0 +1,20 @@
+{
+  "name": "is-unlucky",
+  "version": "0.1.0",
+  "description": "Check if a number is unlucky",
+  "main": "index.js",
+  "devDependencies": {
+    "tap": "^5.7.0"
+  },
+  "scripts": {
+    "test": "tap test.js",
+    "coverage": "tap test.js --cov --coverage-report=lcov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dan-simon/is-unlucky"
+  },
+  "author": "Dan Simon",
+  "license": "MIT",
+  "dependencies": {}
+}
