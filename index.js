@@ -3,7 +3,7 @@
 let base = {};
 
 let is = function (x) {
-  let r = {
+  let props = {
     value: x,
     type: 'is',
     plus: function (y) {
@@ -24,12 +24,20 @@ let is = function (x) {
       return x;
     }
   }
+  let r = Object.create(base);
+  for (let i in props) {
+    r[i] = props[i];
+  }
   r.include = r;
+  r.contain = r;
   r.just = r.only;
+  r.all = r.only;
   r.some = r.any;
-  r.prototype = base;
   return r;
 }
+
+let are = is;
+let does = is;
 
 let to_list = function (x) {
   if (typeof x === 'number') {
@@ -51,26 +59,32 @@ let to_list = function (x) {
 }
 
 let only = function (x) {
-  let r = {
-    value: x,
+  let props = {
+    value: to_list(x),
     type: 'only',
     after: function (x) {
       return x;
     }
   }
-  r.prototype = base;
+  let r = Object.create(base);
+  for (let i in props) {
+    r[i] = props[i];
+  }
   return r;
 }
 
 let any = function (x) {
-  let r = {
-    value: x,
+  let props = {
+    value: to_list(x),
     type: 'any',
     after: function (x) {
       return x;
     }
   }
-  r.prototype = base;
+  let r = Object.create(base);
+  for (let i in props) {
+    r[i] = props[i];
+  }
   return r;
 }
 
@@ -90,7 +104,11 @@ let wrap = function (f) {
   return function () {
     if (this.type === 'is') {
       return this.after(f(this.value));
-    } else if (this.type)
+    } else if (this.type === 'any') {
+      return this.after(this.value.some(f));
+    } else if (this.type === 'only') {
+      return this.after(this.value.every(f));
+    }
   }
 }
 
@@ -103,21 +121,23 @@ let define = function (x) {
       generalize(x);
     } else if (Array.isArray(y)) {
       base[x] = wrap(function (z) {
-        return y.contains(z);
+        return y.includes(z);
       });
       generalize(x);
     } else if (typeof y === 'function') {
-      base[x] = function (z) {
-        let copy = {};
-        copy.prototype = z.prototype;
-        for (let i in z) {
-          copy[i] = z[i];
+      Object.defineProperty(base, x, {
+        get: function () {
+          let copy = Object.create(Object.getPrototypeOf(this));
+          for (let i in this) {
+            copy[i] = this[i];
+          }
+          let old_after = this.after.bind(this);
+          copy.after = function (x) {
+            return y(old_after(x));
+          }
+          return copy;
         }
-        copy.after = function (x) {
-          return y(z.after(x));
-        }
-        return copy;
-      }
+      });
     } else {
       throw new Error('I have no idea what this is.');
     }
@@ -125,6 +145,7 @@ let define = function (x) {
   r.as = r;
   r.to = r;
   r.be = r;
+  return r;
 }
 
 define('not').to.be(function (x) {return !x});
@@ -132,3 +153,5 @@ define('unlucky').to.be([4, 9, 13, 17]);
 define('lucky').to.be([7, 8]);
 define('thirteen').to.be(13);
 define('eight').to.be(8);
+
+module.exports = {is, are, does, define};
