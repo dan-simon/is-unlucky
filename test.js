@@ -1,5 +1,5 @@
 const tap = require('tap');
-const {is, are, does, define} = require('./');
+const {is, are, does, define, internals} = require('./');
 
 tap.equal(is(13).unlucky(), true);
 tap.equal(is(2).unlucky(), false);
@@ -26,10 +26,51 @@ tap.equal(is(100).asNum.thirteen(), 0);
 tap.equal(is(100).not.asNum.thirteen(), 1);
 tap.equal(is(100).asNum.not.thirteen(), true);
 
-// exception
+// exceptions
 tap.throws(function() {
   define('testing').to.be('test');
 }, new Error('I have no idea what this is.'), 'should throw error');
 
+tap.throws(function() {
+  let o = {type: 'weird'}
+  o.test = internals.wrap(function (x) {return !x});
+  o.test();
+}, new Error('Unknown type.'), 'should throw error');
+
 // inner implementation stuff
 tap.equal(is(2).not.value, 2);
+
+// internals tests
+tap.equal(
+  Object.keys(internals).sort().join(', '),
+  'base, generalize, to_list, wrap')
+
+// stuff from the readme
+
+tap.equal(is(13).unlucky(), true);
+tap.equal(is(4).unlucky(), true);
+
+tap.equal(is(4).plus(5).unlucky(), true);
+tap.equal(is(12).plus(1).unlucky(), true);
+tap.equal(is(4).minus(12).unlucky(), false);
+tap.equal(is(14).minus(1).thirteen(), true);
+tap.equal(is(1).times(8).unlucky(), false);
+tap.equal(is(26).dividedBy(2).unlucky(), true);
+
+tap.equal(is(8).lucky(), true);
+tap.equal(is(3).plus(4).lucky(), true);
+tap.equal(is(8).not.unlucky(), true);
+
+tap.equal(is(8).thirteen(), false);
+tap.equal(is(8).plus(5).thirteen(), true);
+tap.equal(is(8).eight(), true);
+
+tap.equal(does([1, 2, 13]).contain.any.unluckyNumbers(), true);
+tap.equal(does([1, 2, 13]).contain.only.unluckyNumbers(), false);
+tap.equal(does([1, 2, 13]).contain.any.eight(), false);
+tap.equal(are.any.of([1, 2, 3]).lucky(), false);
+tap.equal(is(88).all.eight(), false);
+tap.equal(is(88).not.all.eight(), true);
+
+tap.equal(is('B').thirteen(), false);
+tap.equal(is('B').unlucky(), false);

@@ -108,6 +108,8 @@ let wrap = function (f) {
       return this.after(this.value.some(f));
     } else if (this.type === 'only') {
       return this.after(this.value.every(f));
+    } else {
+      throw new Error('Unknown type.');
     }
   }
 }
@@ -130,6 +132,12 @@ let define = function (x) {
           let copy = Object.create(Object.getPrototypeOf(this));
           for (let i in this) {
             copy[i] = this[i];
+            if (copy[i].after) {
+              let old_after = this[i].after.bind(this[i]);
+              copy[i].after = function (x) {
+                return y(old_after(x));
+              }
+            }
           }
           let old_after = this.after.bind(this);
           copy.after = function (x) {
@@ -148,10 +156,17 @@ let define = function (x) {
   return r;
 }
 
+let internals = {
+  base: base,
+  to_list: to_list,
+  generalize: generalize,
+  wrap: wrap
+}
+
 define('not').to.be(function (x) {return !x});
 define('unlucky').to.be([4, 9, 13, 17]);
 define('lucky').to.be([7, 8]);
 define('thirteen').to.be(13);
 define('eight').to.be(8);
 
-module.exports = {is, are, does, define};
+module.exports = {is, are, does, define, internals};
