@@ -69,8 +69,10 @@ tap.equal(does([1, 2, 13]).contain.any.unluckyNumbers(), true);
 tap.equal(does([1, 2, 13]).contain.only.unluckyNumbers(), false);
 tap.equal(does([1, 2, 13]).contain.any.eight(), false);
 tap.equal(are.any.of([1, 2, 3]).lucky(), false);
-tap.equal(is(88).all.eight(), false);
-tap.equal(is(88).not.all.eight(), true);
 
 tap.equal(is('B').thirteen(), false);
 tap.equal(is('B').unlucky(), false);
+
+// Stuff that had been in the README but was actually embarrassing.
+tap.equal(is(88).all.eight(), false);
+tap.equal(is(88).not.all.eight(), true);

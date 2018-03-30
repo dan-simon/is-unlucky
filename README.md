@@ -17,19 +17,8 @@ are considered lucky.
 3. If you really wanted to check whether a number is 13, you still can. Just
 use the thirteen method!
 
-4. The syntax is pleasantly English-like. Consider:
-
-```javascript
-does([1, 2, 13]).contain.any.unluckyNumbers(); // true
-```
-
-or
-
-```javascript
-are.any.of([1, 2, 3]).lucky(); // false
-```
-
-(both of which are in the examples you can get to by just scrolling down).
+4. The syntax is pleasantly English-like, as seen in the examples below this
+list.
 
 5. There is 100% test coverage.
 
@@ -40,11 +29,6 @@ Let's face it: the letter B is not thirteen, neither is it unlucky.
 
 8. It has testing for whether a number is 8, not just 13. This can be extended
 to other numbers by users via the define function.
-
-9. I would again like to point out the importance of 100% test coverage in
-today's world. For example, this list appears differently on npm and github,
-and presumably one of those two markdown parsers is broken. If they both had
-the same quality as is-unlucky, this would not be an issue.
 
 ## Examples
 
@@ -73,8 +57,6 @@ does([1, 2, 13]).contain.any.unluckyNumbers(); // true
 does([1, 2, 13]).contain.only.unluckyNumbers(); // false
 does([1, 2, 13]).contain.any.eight(); // false
 are.any.of([1, 2, 3]).lucky(); // false
-is(88).all.eight(); // false
-is(88).not.all.eight(); // true
 
 is('B').thirteen(); // false
 is('B').unlucky(); // false
