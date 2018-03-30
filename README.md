@@ -19,15 +19,15 @@ use the thirteen method!
 
 4. The syntax is pleasantly English-like. Consider:
 
-```javascript
-does([1, 2, 13]).contain.any.unluckyNumbers(); // true
-```
+    ```javascript
+    does([1, 2, 13]).contain.any.unluckyNumbers(); // true
+    ```
 
 or
 
-```javascript
-are.any.of([1, 2, 3]).lucky(); // false
-```
+    ```javascript
+    are.any.of([1, 2, 3]).lucky(); // false
+    ```
 
 (both of which are in the examples you can get to by just scrolling down).
 
