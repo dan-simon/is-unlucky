@@ -73,6 +73,14 @@ tap.equal(are.any.of([1, 2, 3]).lucky(), false);
 tap.equal(is('B').thirteen(), false);
 tap.equal(is('B').unlucky(), false);
 
+tap.equal(is(100).big(), true);
+tap.equal(is(40).big(), false);
+tap.equal(is(1e6).a.lot(), true);
+tap.equal(is(40).a.lot(), false);
+tap.equal(is(7).small(), false);
+tap.equal(is(10).small(), true);
+tap.equal(is(13).small(), false);
+
 // Stuff that had been in the README but was actually embarrassing.
 tap.equal(is(88).all.eight(), false);
 tap.equal(is(88).not.all.eight(), true);

@@ -33,6 +33,7 @@ let is = function (x) {
   r.just = r.only;
   r.all = r.only;
   r.some = r.any;
+  r.a = r;
   return r;
 }
 
@@ -114,19 +115,30 @@ let wrap = function (f) {
   }
 }
 
+let to_wrap = function (x) {
+   if (typeof y === 'number') {
+    return function (z) {
+      return y === z;
+    });
+    generalize(x);
+  } else if (Array.isArray(y)) {
+    return function (z) {
+      return y.includes(z);
+    };
+  } else if (typeof y === 'function') {
+    return y;
+  } else {
+    throw new Error('I have no idea what this is.');
+  }
+}
+
 let define = function (x) {
   let r = function (y) {
-    if (typeof y === 'number') {
-      base[x] = wrap(function (z) {
-        return y === z;
-      });
-      generalize(x);
-    } else if (Array.isArray(y)) {
-      base[x] = wrap(function (z) {
-        return y.includes(z);
-      });
-      generalize(x);
-    } else if (typeof y === 'function') {
+    base[x] = wrap(to_wrap(y));
+    generalize(x);
+  }
+  r.operator = function (y) {
+     if (typeof y === 'function') {
       Object.defineProperty(base, x, {
         get: function () {
           let copy = Object.create(Object.getPrototypeOf(this));
@@ -163,7 +175,10 @@ let internals = {
   wrap: wrap
 }
 
-define('not').to.be(function (x) {return !x});
+define('not').to.be.operator(function (x) {return !x});
+define('big').to.be(function (x) {return x >= 100});
+define('lot').to.be('big');
+define('small').to.be(function (x) {return x <= 10});
 define('unlucky').to.be([4, 9, 13, 17]);
 define('lucky').to.be([7, 8]);
 define('thirteen').to.be(13);
