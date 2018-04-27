@@ -116,19 +116,22 @@ let wrap = function (f) {
 }
 
 let to_wrap = function (x) {
-   if (typeof y === 'number') {
-    return function (z) {
-      return y === z;
-    });
-    generalize(x);
-  } else if (Array.isArray(y)) {
-    return function (z) {
-      return y.includes(z);
+   if (typeof x === 'number') {
+    return function (y) {
+      return x === y;
     };
-  } else if (typeof y === 'function') {
-    return y;
+  } else if (typeof x === 'string') {
+    return function (y) {
+      return is(y)[x]();
+    }
+  } else if (Array.isArray(x)) {
+    return function (y) {
+      return x.includes(y);
+    };
+  } else if (typeof x === 'function') {
+    return x;
   } else {
-    throw new Error('I have no idea what this is.');
+    throw new Error('I have no idea what this is (' + x + ').');
   }
 }
 
@@ -138,11 +141,17 @@ let define = function (x) {
     generalize(x);
   }
   r.operator = function (y) {
-     if (typeof y === 'function') {
+    if (typeof y === 'function') {
       Object.defineProperty(base, x, {
         get: function () {
           let copy = Object.create(Object.getPrototypeOf(this));
+          let seen = [];
           for (let i in this) {
+            if (seen.includes(this[i])) {
+              continue;
+            } else {
+              seen.push(this[i]);
+            }
             copy[i] = this[i];
             if (copy[i].after) {
               let old_after = this[i].after.bind(this[i]);
@@ -151,15 +160,16 @@ let define = function (x) {
               }
             }
           }
-          let old_after = this.after.bind(this);
-          copy.after = function (x) {
-            return y(old_after(x));
+          if (seen.includes(this)) {
+            return this;
+          } else {
+            throw new Error("Either you've mucked around with " +
+            "the implementation or there's a bug.");
           }
-          return copy;
         }
       });
     } else {
-      throw new Error('I have no idea what this is.');
+      throw new Error('I have no idea what this is (' + y + ').');
     }
   }
   r.as = r;

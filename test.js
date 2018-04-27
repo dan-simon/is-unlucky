@@ -21,21 +21,30 @@ define('aLot').as([100, 1000000]);
 tap.equal(is(100).aLot(), true);
 tap.equal(is(1000).aLot(), false);
 
-define('asNum').to.be(function (x) {return +x});
+define('asNum').to.be.operator(function (x) {return +x});
 tap.equal(is(100).asNum.thirteen(), 0);
 tap.equal(is(100).not.asNum.thirteen(), 1);
 tap.equal(is(100).asNum.not.thirteen(), true);
 
 // exceptions
 tap.throws(function() {
-  define('testing').to.be('test');
-}, new Error('I have no idea what this is.'), 'should throw error');
+  define('testing').to.be({'a': 1});
+}, new Error('I have no idea what this is ([object Object]).'), 'should throw error');
 
 tap.throws(function() {
   let o = {type: 'weird'}
   o.test = internals.wrap(function (x) {return !x});
   o.test();
 }, new Error('Unknown type.'), 'should throw error');
+
+tap.throws(function() {
+  Object.create(internals.base).not;
+}, new Error("Either you've mucked around with " +
+"the implementation or there's a bug."), 'should throw error');
+
+tap.throws(function() {
+  define('test').to.be.operator('test');
+}, new Error('I have no idea what this is (test).'), 'should throw error');
 
 // inner implementation stuff
 tap.equal(is(2).not.value, 2);
@@ -77,7 +86,7 @@ tap.equal(is(100).big(), true);
 tap.equal(is(40).big(), false);
 tap.equal(is(1e6).a.lot(), true);
 tap.equal(is(40).a.lot(), false);
-tap.equal(is(7).small(), false);
+tap.equal(is(7).small(), true);
 tap.equal(is(10).small(), true);
 tap.equal(is(13).small(), false);
 
