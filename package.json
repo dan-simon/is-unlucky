@@ -4,7 +4,7 @@
   "description": "Check if a number is unlucky",
   "main": "index.js",
   "devDependencies": {
-    "tap": "^11.1.5"
+    "tap": "^14.2.2"
   },
   "scripts": {
     "test": "tap test.js",
